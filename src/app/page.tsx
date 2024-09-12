@@ -1,101 +1,144 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import { socket } from "../socket.js";
+import PoiCard from "@/components/PoiCard";
+import { helvetica, helveticaBold, helveticaLight, helveticaThin } from "./fonts/index";
+import PoiCarousel from "@/components/Carousel/PoiCarousel";
+import Landing from "@/components/Landing";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [isConnected, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState("N/A");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showMain, setShowMain] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const navitems = ['Home', 'Explore', 'Chat', 'Sign Up', 'Login']
+
+  const NewPoiList = [
+    {name: 'Albert Einstein', image: 'albert-bg1.png', desc: 'The visionary physicist who redefined our understanding of space, time, and energy'},
+    {name: 'MLK', image: 'martin-bg.png', desc: 'The civil rights leader who championed equality and justice through nonviolence'},
+    {name: 'Isaac Newton', image: 'newton-bg.png', desc: 'The groundbreaking physicist and mathematician who laid the foundation for classical mechanics'},
+  ]
+
+  const PoiList = [
+    {name: 'Albert Einstein', image: 'albert1.png', profession: 'Scientist'},
+    {name: 'MLK', image: 'mlk.png', profession: 'Freedom Fighter'},
+    {name: 'Isaac Newton', image: 'newton.png', profession: 'Scientist'},
+    {name: 'Shakespeare', image: 'shake.png', profession: 'Poet'},
+    {name: 'Marie Curie', image: 'marie.png', profession: 'Scientist'},
+    {name: 'Nelson Mandela', image: 'mandela.png', profession: 'Freedom Fighter'},
+    {name: 'Elizabeth I', image: 'queen.png', profession: 'Former Queen'},
+    {name: 'Charles Darwin', image: 'darwin.png', profession: 'Scientist'},
+    {name: 'Elvis Presley', image: 'elvis.png', profession: 'Singer'},
+    {name: 'Abraham Lincoln', image: 'lincoln.png', profession: 'Former President'},
+    {name: 'Gandhi', image: 'gandhi.png', profession: 'Freedom Fighter'},
+    {name: 'Julius Caesar', image: 'caesar.png', profession: 'Ruler '},
+  ]
+
+  // Temporary chat functionality
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
+
+      socket.io.engine.on("upgrade", (transport: any) => {
+        setTransport(transport.name);
+      });
+      const poi = {
+        name: 'Albert Einstein',
+        period: 'Early 20th Century',
+        field: 'Theories of Relativity, Scientific Research',
+        contributions: 'E=mc², General and Special Relativity, Nobel Prize in Physics 1921',
+        traits: 'Thoughtful, Intellectual, Curious, Open-Minded'  
+      }
+
+      socket.emit("init chat", poi)
+    }
+
+    socket.on("chat stream", (response: {user: string, message: string}) => {
+      console.log(response)
+    })
+
+    socket.on("chat message end", (response: {user: string, message: string}) => {
+      console.log('done')
+    })
+
+
+    function onDisconnect() {
+      setIsConnected(false);
+      setTransport("N/A");
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+
+  const filteredPoiList = PoiList.filter(poi =>
+    poi.name.toLowerCase().includes(searchQuery)
+  );
+
+  return (
+    <>
+    {!showMain && <Landing setShowMain={setShowMain}/>}
+
+      <div className={`opacity-0 transition-all duration-500 ${showMain ? `opacity-100` : ''}`}>
+    {/* Top Section */}
+    <div className="w-full bg-spotlight relative">
+      {/* Navbar */}
+      <nav className={`relative text-white p-5 ${helveticaBold.className}`}>
+        <p className="text-[50px] ml-4">Talking Time Machine</p>
+        <div className="flex justify-between absolute right-4 text-lg top-6 w-[30%]">
+          {navitems.map((item, index) => (
+          <p key={index} className="relative group cursor-pointer">
+            {item}
+          <span className="absolute h-[3px] bg-white -bottom-1 left-1/2 transform -translate-x-1/2 w-0 transition-all origin-center group-hover:w-full"></span>
+          </p>
+        ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+      {/* About */}
+      <div className={`text-white ${helveticaThin.className} px-11 py-12 absolute bottom-10`}>
+        <h1 className={`text-[28px] mb-5 ${helveticaBold.className}`}>Converse with History's Greatest Minds</h1>
+        <p className="text-[18px] w-[35%]">Step into the past and engage in conversations with the greatest minds in history. 
+          Our AI-powered platform lets you talk directly with iconic figures like Albert Einstein, 
+          Marie Curie, and others. Whether you’re seeking knowledge, inspiration, or just a chat with someone who changed the world, 
+          this immersive experience brings history to life in ways never before possible. Ask questions, 
+          learn from their wisdom, and dive into the stories that shaped our world—right from the comfort of your screen.</p>
+      </div>
+      {/* New People Carousel */}
+      <PoiCarousel slides={NewPoiList} options={{ direction: 'rtl', loop: true }}/>
     </div>
+    <div className="relative p-4 w-full">
+    {/* Person Grid Area*/}
+    <div className="absolute w-[98%] -top-2 glass-effect">
+    <div className="flex justify-between my-2 p-7">
+      {/* Title */}
+      <p className={`text-[34px] text-white ml-1 ${helveticaBold.className}`}>Our Minds</p>
+      {/* Search bar */}
+      <div className={`bg-background rounded-full mr-10 ${helveticaLight.className}`}>
+        <input type="text" placeholder="Search for a person" className="py-3 px-4 rounded-full w-[400px] text-white bg-background border-none outline-none" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </div>
+    </div>
+
+    {/* Person Grid with Live Filtering */}
+    <div className="grid grid-cols-6 gap-3 p-10">
+     {filteredPoiList.map((poi, index) => (
+       <PoiCard key={index} name={poi.name} image={poi.image} profession={poi.profession} isNew={NewPoiList.map(poi => poi.name).includes(poi.name)}/>
+      ))}
+    </div> 
+    </div>
+    </div>
+    </div>
+    </>
   );
 }
