@@ -9,9 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
+        background: "rgb(21, 17, 28)",
         foreground: "var(--foreground)",
       },
+      backgroundImage: {
+        'spotlight': 'radial-gradient(circle at 64% 90%, rgba(128, 128, 128, 0.4) 15%, rgb(21, 17, 28) 33%)',
+      }
+      
+      
     },
   },
   plugins: [],

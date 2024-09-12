@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { oldStandardTT } from "./fonts";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -12,6 +13,7 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${oldStandardTT.className} bg-background text-white antialiased`}
       >
         {children}
       </body>
