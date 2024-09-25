@@ -39,3 +39,26 @@ box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(8.1px);
 -webkit-backdrop-filter: blur(8.1px);
 }
+
+.rainbow-5:hover{
+  background-image:     linear-gradient(
+     to right, 
+     #E7484F,
+     #E7484F 25%,
+     #FCED00 25%,
+     #FCED00 50%,
+     #009E4F 50%,
+     #009E4F 75%,
+     #00AAC3 75%,
+     #00AAC3 100%,
+    
+   );
+ animation:slidebg 2s linear infinite;
+}
+
+
+@keyframes slidebg {
+ to {
+   background-position:20vw;
+ }
+}

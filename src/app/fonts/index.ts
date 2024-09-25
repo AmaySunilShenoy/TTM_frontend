@@ -21,6 +21,12 @@ export const helveticaBlack = localFont({
     weight: "100 900",
   });
 
+  export const helveticaThinItalic = localFont({
+    src: "./HelveticaNeueThinItalic.otf",
+    variable: "--font-helvetica",
+    weight: "100 900",
+  });
+
   export const helvetica = localFont({
     src: "./HelveticaNeueRoman.otf",
     variable: "--font-helvetica",
@@ -33,9 +39,34 @@ export const helveticaLight = localFont({
     weight: "100 900",
     });
 
+export const helveticaLightItalic = localFont({
+      src: "./HelveticaNeueLightItalic.otf",
+      variable: "--font-helvetica",
+      weight: "100 900",
+      });
+
 export const helveticaBold = localFont({
         src: "./HelveticaNeueBold.otf",
         variable: "--font-helvetica",
         weight: "100 900",
         });
+
+export const helveticaBoldItalic = localFont({
+          src: "./HelveticaNeueBoldItalic.otf",
+          variable: "--font-helvetica",
+          weight: "100 900",
+          });
+
+export const helveticaUltraLight = localFont({
+            src: "./HelveticaNeueUltraLight.otf",
+            variable: "--font-helvetica",
+            weight: "100 900",
+            });
+
+export const helveticaUltraLightItalic = localFont({
+              src: "./HelveticaNeueUltraLightItalic.otf",
+              variable: "--font-helvetica",
+              weight: "100 900",
+              });
+
 export const oswald = Oswald({subsets: ['latin']})

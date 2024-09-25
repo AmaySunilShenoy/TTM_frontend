@@ -10,6 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         background: "rgb(21, 17, 28)",
+        lightBlack: "rgb(8, 8, 8)",
+        lightGray: "rgba(7, 7, 7,0.9)",
+        lightWhite: "rgb(230,213,213)",
         foreground: "var(--foreground)",
       },
       backgroundImage: {
