@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import instance from '@/constants/axios';
 import RegisterForm from './RegisterForm'
 import { useUser } from '@/contexts/UserContext';
+import Google from './GoogleLogin';
 
 const LoginForm = () => {
     const [email, setEmail] = React.useState('')
@@ -25,7 +26,7 @@ const LoginForm = () => {
     const handleSubmit = async() => {
       console.log('Email:', email)
         if(!showInput){
-          instance.post('/auth/checkuser', {email}).then((res) => {
+          instance.post('/auth/checkuser', {email, usingGoogle: false}).then((res) => {
             if(res.data.user){
               setShowInput(true)
             } else {
@@ -35,7 +36,7 @@ const LoginForm = () => {
             console.log(err)
           })
         }else{
-            await login({email, password})
+            await login({email, password, usingGoogle: false})
         }
     }
 
@@ -55,7 +56,7 @@ const LoginForm = () => {
             <hr className="w-[100px]"/>
           </div>
           {/* Google login */}
-          <button className="w-[300px] h-[50px] m-4 p-6 rounded-md bg-lightWhite flex gap-6 text-center justify-between items-center rainbow-5 shadow-xl transition-all duration-[600ms] hover:-translate-y-1 text-black group" > <FcGoogle className="transition-all duration-[600ms] group-hover:translate-x-[117px] group-hover:scale-150 group-hover:rotate-[360deg]"/> <span className={`mr-10 transition-all duration-[600ms] group-hover:translate-x-10 group-hover:opacity-0 ${helveticaLight.className}`}>Continue with Google</span></button>
+          <Google />
           </div>
     </div>)
   )

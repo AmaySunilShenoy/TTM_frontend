@@ -4,6 +4,7 @@ import { FcGoogle } from 'react-icons/fc'
 import CircularProgress from '@mui/material/CircularProgress';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import instance from '@/constants/axios';
+import { useUser } from '@/contexts/UserContext';
 
 const RegisterForm = ({email} :{email : string}) => {
     const [username, setUsername] = React.useState('')
@@ -12,10 +13,14 @@ const RegisterForm = ({email} :{email : string}) => {
     const [showPassword, setShowPassword] = React.useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
     const [isButtonLoading, setIsButtonLoading] = React.useState(false)
+    const {login} = useUser()
 
-    const handleSubmit = () => {
-        instance.post('/auth/register', {username, email, password}).then((res) => {
-            console.log(res)
+    const handleSubmit = async () => {
+        instance.post('/auth/register', {username, email, password}).then(async (res) => {
+            if (res.status == 201){
+                console.log('User:', res.data.user)
+                await login({email, password, usingGoogle: false})
+            }
         }).catch((err) => {
             console.log(err)
         })

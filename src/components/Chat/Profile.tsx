@@ -28,12 +28,9 @@ const Profile = ({poi} : {poi: PoI | null}) => {
         <div className="relative flex flex-col items-center">
         <div className="relative bg-lightBlack rounded-full pt-20 overflow-hidden w-[400px] h-[400px] flex justify-center items-center">
           {/* Einstein Image */}
-          <Image
-            src={`/assets/chat/${poi.image}`}
+          <img
+            src={poi.chat_image}
             alt="Albert Einstein"
-            width="0"
-  height="0"
-  sizes="100vw"
             className="z-20 w-full h-full object-cover rounded-full"
           />
         </div>

@@ -62,3 +62,42 @@ backdrop-filter: blur(8.1px);
    background-position:20vw;
  }
 }
+
+.page-exit{
+  pointer-events: none;
+  overflow: hidden;
+}
+
+
+
+
+
+[data-initials]::before {
+  content: attr(data-initials);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+[data-initials]:hover::before {
+  opacity: 0;
+}
+
+[data-full-name]::after {
+  content: attr(data-full-name);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+[data-initials]:hover::after {
+  opacity: 1;
+}

@@ -16,8 +16,14 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       backgroundImage: {
-        'spotlight': 'radial-gradient(circle at 64% 90%, rgba(128, 128, 128, 0.4) 15%, rgb(21, 17, 28) 33%)',
-      }
+        'spotlight': 'radial-gradient(circle at 40% 80%, rgba(128, 128, 128, 0.4) 10%, rgb(21, 17, 28) 50%)',
+        'spotlight-mini': 'radial-gradient(circle at 25% 70%, rgba(128, 128, 128, 0.4) 10%, rgb(21, 17, 28) 27%)',
+      },
+      screens: {  
+        '3xl': '1600px',
+        '1.5xl': '1350px',
+        '0.5xl': '1180px',
+      },
       
       
     },

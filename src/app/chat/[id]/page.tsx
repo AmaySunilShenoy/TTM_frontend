@@ -2,7 +2,7 @@
 import { helveticaBold, helveticaLight } from "@/app/fonts";
 import Profile from "@/components/Chat/Profile";
 import SideTab from "@/components/Chat/SideTab";
-import ChatArea from "@/components/ChatArea";
+import ChatArea from "@/components/Chat/ChatArea";
 import withAuth from "@/app/withAuth";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";

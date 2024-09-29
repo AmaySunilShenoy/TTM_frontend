@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import TextArea from "./Chat/TextArea";
+import TextArea from "./TextArea";
 import { BiSend } from "react-icons/bi";
-import { helvetica, helveticaLight, helveticaThin } from "@/app/fonts/index";
+import { helveticaLight } from "@/app/fonts/index";
 import instance from "@/constants/axios";
 import { PoI } from "@/app/home/page";
-import {socket} from "../socket.js"
-import Image from "next/image";
-import Message from "./Chat/Message";
+import Message from "./Message";
+import { io, Socket } from "socket.io-client";
+import { useUser } from "@/contexts/UserContext";
 
 interface Message {
   role: string;
@@ -18,6 +18,8 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
   const [currentMessage, setCurrentMessage] = useState("");
   const [userInput, setUserInput] = useState("");
   const [messageLoading, setMessageLoading] = useState(false);
+  const { user } = useUser();
+  const socketRef = useRef<Socket | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -31,45 +33,58 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
 
   useEffect(() => {
     // Socket connection setup
-    console.log("Connecting to socket");
-    socket.connect();
+    if (!socketRef.current) {
+      socketRef.current = io('http://localhost:3002', {
+        autoConnect: false,
+        path: '/chat-io',
+        withCredentials: true,
+        reconnectionDelay: 1000,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        transports: ['websocket'],
+        agent: false,
+        upgrade: false,
+        rejectUnauthorized: false,
+        auth: {
+          token: user?.token
+        }
+      });
 
-    // Handle socket events
-    socket.on("connect", () => {
-      console.log("Socket connected");
-    });
+      // Connect the socket
+      socketRef.current.connect();
 
-    socket.on("chat stream", (data) => {
-      setMessageLoading(false);
-      console.log("chat stream from AI", data.content);
-      setCurrentMessage((prev) => prev + data.content);
-    });
+      // Handle socket events
+      socketRef.current.on("connect", () => {
+        console.log("Socket connected");
+        if (chat_id) {
+          console.log("Initializing chat with ID:", chat_id);
+          socketRef.current?.emit("init chat", chat_id);
+        }
+      });
 
-    socket.on("chat message end", (data) => {
-      console.log("chat message end", data.role, data.content);
-      setMessages((prev: Message[]): Message[] => [
-        ...prev,
-        { role: data.role, content: data.content },
-      ]);
-      setCurrentMessage("");
-    });
+      socketRef.current.on("chat stream", (data) => {
+        setMessageLoading(false);
+        console.log("chat stream from AI", data.content);
+        setCurrentMessage((prev) => prev + data.content);
+      });
+
+      socketRef.current.on("chat message end", (data) => {
+        console.log("chat message end", data.role, data.content);
+        setMessages((prev: Message[]): Message[] => [
+          ...prev,
+          { role: data.role, content: data.content },
+        ]);
+        setCurrentMessage("");
+      });
+    }
 
     return () => {
-      socket.off("chat stream");
-      socket.off("chat message end");
+      socketRef.current?.disconnect();
     };
-  }, []);
-
-  useEffect(() => {
-    if (chat_id) {
-      console.log("Initializing chat with ID:", chat_id);
-      socket.emit("init chat", chat_id);
-    }
-  }, [chat_id]);
+  }, [chat_id, user?.token]);
 
   const sendMessage = () => {
-
-    if (userInput.trim()) {
+    if (userInput.trim() && socketRef.current?.connected) {
       console.log("Sending message", userInput);
       instance
         .post("/message", {
@@ -80,7 +95,8 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
         .then((res) => {
           if (res.status === 201) {
             setMessageLoading(true);
-            socket?.emit("chat message",chat_id, userInput);
+            console.log("Emitting chat message");
+            socketRef.current?.emit("chat message", chat_id, userInput);
             setMessages((prev : Message[]) => [
               ...prev,
               { role: "user", content: userInput },
@@ -88,6 +104,8 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
             setUserInput("");
           }
         });
+    } else {
+      console.log("Socket not connected or input empty");
     }
   };
 
@@ -96,7 +114,7 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
       <div className="p-4 flex h-full w-full flex-1 flex-col md:px-2 ">
         <div className="w-full h-[94%] p-3 px-4 flex flex-col gap-5 overflow-scroll">
           {messages.map((msg : {role : string, content : string}, index : number) => (
-            <Message key={index} role={msg.role} content={msg.content} image={poi.image} />
+            <Message key={index} role={msg.role} content={msg.content} image={poi.chat_image} />
           ))}
           {currentMessage && (
             <Message image={poi.image} content={currentMessage} />

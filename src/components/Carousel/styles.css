@@ -1,7 +1,5 @@
 .embla {
   max-width: 48rem;
-  margin: 80px 50px 0px auto;
-  margin-right: 50px;
   --slide-height: 19rem;
   --slide-spacing: 1rem;
   --slide-size: 100%;
@@ -11,7 +9,6 @@
 }
 .embla__container {
   display: flex;
-  float:right;
   touch-action: pan-y pinch-zoom;
   margin-left: calc(var(--slide-spacing) * -1);
 }

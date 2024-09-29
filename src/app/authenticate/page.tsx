@@ -1,5 +1,4 @@
 "use client";
-import ChatArea from "@/components/ChatArea";
 import { redirect, useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { useGlitch, GlitchHandle } from 'react-powerglitch';

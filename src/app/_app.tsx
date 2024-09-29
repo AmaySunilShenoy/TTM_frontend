@@ -1,10 +1,13 @@
-import type { AppProps } from 'next/app'
-import { Providers } from './providers'
- 
-export default function MyApp({ Component, pageProps }: AppProps) {
+import type { AppProps } from "next/app";
+import { Providers } from "./providers";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function MyApp({ Component, pageProps, router }: AppProps) {
   return (
-  <Providers>
-    <Component {...pageProps} />
-  </Providers>
-  )
+    <Providers>
+      <AnimatePresence mode="wait">
+        <Component key={router.route} {...pageProps} />
+      </AnimatePresence>
+    </Providers>
+  );
 }

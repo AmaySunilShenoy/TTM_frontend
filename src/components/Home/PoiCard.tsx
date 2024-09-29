@@ -3,6 +3,7 @@ import { helvetica, helveticaBlack } from "@/app/fonts";
 import instance from "@/constants/axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import TransitionLink from "../TransitionLink";
 
 interface PoiCardProps {
   id: string;
@@ -10,32 +11,37 @@ interface PoiCardProps {
   image: string;
   profession: string;
   isNew?: boolean;
+  imageUrl?: boolean;
+  disableOnClick?: boolean;
 }
 
-const PoiCard = ({ id, name, image, profession, isNew = false }: PoiCardProps) => {
+
+const PoiCard = ({ id, name, image, profession, isNew = false, disableOnClick=false }: PoiCardProps) => {
   const router = useRouter();
-  const handleClick = ({poi_id} : {poi_id : string}) => {
-    instance.post(`/chat/`, {
-      poi_id: poi_id
-    }).then(response => {
-      router.push(`/chat/${response.data.id}`)
-    }).catch(err => {
-      console.log(err)
-    })
+  const handleClick = async () => {
+    try {
+      const response = await instance.post(`/chat/`, {
+        poi_id: id
+      });
+      const chatId: string = response.data.id;
+      console.log('Chat ID:', chatId);
+      return chatId;
+    } catch (err) {
+      console.log(err);
+      return '';
+    }
   };
 
   return (
-    <div className="relative w-52 h-80 transition-all hover:scale-105 cursor-pointer group" onClick={() => handleClick({ poi_id: id })}>
+    disableOnClick ? 
+    <div className="relative w-36 h-60 sm:w-40 sm:h-64 md:w-52 md:h-80 transition-all hover:scale-105 cursor-pointer group">
       <div className="relative w-full h-full bg-spotlight brightness-50 overflow-hidden rounded-[30px] group-hover:border-4 group-hover:border-white flex flex-col items-center shadow-lg">
         {/* Profile Image */}
-        <Image
-          className="w-full h-full object-cover rounded-[30px] transition-all scale-110 group-hover:scale-100"
-          src={`/assets/${image}`}
+        {image ? <img
+          className="w-full h-full object-cover rounded-[30px] transition-all sm:scale-110 group-hover:scale-100"
+          src={image}
           alt={name}
-          width="0"
-          height="0"
-          sizes="100vw"
-        />
+        /> : <div className="w-full h-full bg-black rounded-[30px]"></div>}
 
         
       </div>
@@ -48,10 +54,36 @@ const PoiCard = ({ id, name, image, profession, isNew = false }: PoiCardProps) =
 
       {/* Name and Profession */}
       <div className={`absolute bottom-0 p-4 brightness-100 leading-tight ${helveticaBlack.className}`}>
-        <h3 className="text-white text-[25px] font-semibold">{name}</h3>
-        <p className="text-gray-400 text-lg">{profession}</p>
+        <h3 className="text-white text-[16px] sm:text-[20px] md:text-[25px] font-semibold">{name}</h3>
+        <p className="text-gray-400 text-sm sm:text-lg">{profession}</p>
+      </div>
+    </div> : 
+    <TransitionLink href={`/chat`} before={handleClick}>
+      <div className="relative w-36 h-60 sm:w-40 sm:h-64 md:w-52 md:h-80 transition-all hover:scale-105 cursor-pointer group">
+      <div className="relative w-full h-full bg-spotlight brightness-50 overflow-hidden rounded-[30px] group-hover:border-4 group-hover:border-white flex flex-col items-center shadow-lg">
+        {/* Profile Image */}
+        {image ? <img
+          className="w-full h-full object-cover rounded-[30px] transition-all sm:scale-110 group-hover:scale-100"
+          src={image}
+          alt={name}
+        /> : <div className="w-full h-full bg-black rounded-[30px]"></div>}
+
+        
+      </div>
+      {/* "New" Icon */}
+      {isNew && (
+          <div className={`absolute top-3 right-3 bg-white text-black text-xs font-semibold px-2 py-1 rounded-full ${helvetica.className}`}>
+            New
+          </div>
+        )}
+
+      {/* Name and Profession */}
+      <div className={`absolute bottom-0 p-4 brightness-100 leading-tight ${helveticaBlack.className}`}>
+        <h3 className="text-white text-[16px] sm:text-[20px] md:text-[25px] font-semibold">{name}</h3>
+        <p className="text-gray-400 text-sm sm:text-lg">{profession}</p>
       </div>
     </div>
+    </TransitionLink>
   );
 };
 

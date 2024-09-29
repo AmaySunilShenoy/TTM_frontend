@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${helvetica.className} bg-background text-white antialiased`}
+        className={`${helvetica.className} bg-black text-white antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

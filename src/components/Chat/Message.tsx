@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { useUser } from "@/contexts/UserContext";
 
 const Message = ({
   image,
@@ -12,6 +13,7 @@ const Message = ({
   key?: any;
   role?: string | undefined;
 }) => {
+  const {user} = useUser();
   return (
     <div
       key={key}
@@ -20,16 +22,17 @@ const Message = ({
       }`}
     >
       <div className="w-10 h-10">
-        <Image
-          src={`${
-            role === "user" ? `/assets/profile.jpg` : `/assets/chat/${image}`
-          }`}
-          width="0"
-          height="0"
-          sizes="100vw"
+        {role === "user" ? (
+
+<div className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center"> 
+<p className='text-sm mr-[1px]'>{user ? user.username.charAt(0).toUpperCase() + user.username.charAt(1).toUpperCase(): 'GU'}</p>
+</div>
+        ) : 
+        <img
+          src={image}
           alt={"profile image"}
           className="w-full h-full object-cover rounded-full"
-        />
+        />}
       </div>
       <div
         key={key}

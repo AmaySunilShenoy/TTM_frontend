@@ -46,7 +46,7 @@ const Landing = ({ setShowMain }: { setShowMain: (bool: boolean) => void }) => {
         id="remote"
         src="/assets/remote.png"
         alt="Remote"
-        className="absolute"
+        className="absolute w-full"
         width="0"
         height="0"
         sizes="100vw"
