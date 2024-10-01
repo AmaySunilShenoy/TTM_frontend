@@ -1,11 +1,8 @@
-import React, { useEffect } from "react";
-import { BiBrain } from "react-icons/bi";
-import { GiLightBulb } from "react-icons/gi";
+import React from "react";
 import { StarsBackground } from "../ui/stars-background";
 import { ShootingStars } from "../ui/shooting-stars";
-import { helveticaBold, helveticaLight, helveticaLightItalic, helveticaThinItalic, helveticaUltraLightItalic } from "@/app/fonts";
+import { helveticaBold, helveticaThinItalic } from "@/fonts";
 import { PoI } from "@/app/home/page";
-import Image from "next/image";
 
 
 const Profile = ({poi} : {poi: PoI | null}) => {

@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { useUser } from "@/contexts/UserContext";
 
 const Message = ({
@@ -11,7 +10,7 @@ const Message = ({
   image: string;
   content: string;
   key?: any;
-  role?: string | undefined;
+  role?: string;
 }) => {
   const {user} = useUser();
   return (
@@ -30,7 +29,7 @@ const Message = ({
         ) : 
         <img
           src={image}
-          alt={"profile image"}
+          alt={"profile"}
           className="w-full h-full object-cover rounded-full"
         />}
       </div>

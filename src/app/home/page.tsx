@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { helvetica, helveticaBold, helveticaLight, helveticaThin } from "../fonts/index";
+import { helveticaBold, helveticaThin } from "../../fonts/index";
 import PoiCarousel from "@/components/Carousel/PoiCarousel";
 import Landing from "@/components/Landing";
 import Navbar from "@/components/Home/Navbar";
-import withAuth from "../withAuth";
 import instance from "@/constants/axios";
 import { useUser } from "@/contexts/UserContext";
 import PoiGrid from "@/components/Home/PoiGrid";
@@ -82,4 +81,4 @@ function Home() {
 }
 
 // export default Home;
-export default withAuth(Home);
+export default Home;

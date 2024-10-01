@@ -1,19 +1,16 @@
 "use client";
-import { redirect, useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { useGlitch, GlitchHandle } from 'react-powerglitch';
-import { onest } from "../fonts";
-import LoginForm from "@/components/Authenticate/LoginForm"
+import { onest } from "../../fonts";
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Form from "@/components/Authenticate/Form";
 const Authenticate = () => {
-  const { id } = useParams();
   const {user} = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    console.log('user', user);
     if (user) {
       router.push('/home');
     }
@@ -30,14 +27,14 @@ const Authenticate = () => {
       amplitudeY: 0.05
     },
     slice: {
-      count: 3
+      count: 20
     }
   });
 
   const glitchText: GlitchHandle = useGlitch({
     hideOverflow: true,
     timing: {
-      duration: 5000
+      duration: 4000
     },
     shake: {
       velocity: 15,
@@ -52,11 +49,12 @@ const Authenticate = () => {
 
 
   return (
-    <div className={`flex ${onest.className}`}>
+    <div className={`flex ${onest.className} bg-background overflow-hidden`}>
+      {/* Left Image Panel */}
       <div className="flex-1 h-screen">
         <Image
         ref={glitch.ref}
-          src="/assets/authBack.png"
+          src="/assets/banner2.jpg"
           alt="Chat Background"
           width="0"
           height="0"
@@ -64,12 +62,17 @@ const Authenticate = () => {
           className="h-full w-full scale-105 object-cover"
         />
       </div>
-      <div className="flex-[1.5] h-screen flex-col overflow-hidden bg-background text-lightWhite">
+      {/* Right Login Form */}
+      <div className="flex-[1.5] h-screen flex flex-col justify-center py-10">
+          {/* Title */}
         <div className="text-center">
         <p className={`text-[30px] ml-4 font-bold`}>Welcome to the </p>
         <p className={`text-[50px] ml-4 font-bold`} ref={glitchText.ref}>Talking Time Machine</p>
+        {/*  */}
         </div>
-        <LoginForm />
+      <div className="justify-center overflow-hidden bg-background text-lightWhite">
+        <Form />
+      </div>
       </div>
     </div>
   );

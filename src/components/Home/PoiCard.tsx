@@ -1,8 +1,6 @@
 import React from "react";
-import { helvetica, helveticaBlack } from "@/app/fonts";
+import { helvetica, helveticaBlack } from "@/fonts";
 import instance from "@/constants/axios";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import TransitionLink from "../TransitionLink";
 
 interface PoiCardProps {
@@ -12,12 +10,12 @@ interface PoiCardProps {
   profession: string;
   isNew?: boolean;
   imageUrl?: boolean;
-  disableOnClick?: boolean;
+  disableDefaultClick?: boolean;
+  onClick?: () => void;
 }
 
 
-const PoiCard = ({ id, name, image, profession, isNew = false, disableOnClick=false }: PoiCardProps) => {
-  const router = useRouter();
+const PoiCard = ({ id, name, image, profession, isNew = false, disableDefaultClick=false, onClick=() => {} }: PoiCardProps) => {
   const handleClick = async () => {
     try {
       const response = await instance.post(`/chat/`, {
@@ -33,7 +31,8 @@ const PoiCard = ({ id, name, image, profession, isNew = false, disableOnClick=fa
   };
 
   return (
-    disableOnClick ? 
+    disableDefaultClick ? 
+    <div onClick={onClick}>
     <div className="relative w-36 h-60 sm:w-40 sm:h-64 md:w-52 md:h-80 transition-all hover:scale-105 cursor-pointer group">
       <div className="relative w-full h-full bg-spotlight brightness-50 overflow-hidden rounded-[30px] group-hover:border-4 group-hover:border-white flex flex-col items-center shadow-lg">
         {/* Profile Image */}
@@ -57,7 +56,9 @@ const PoiCard = ({ id, name, image, profession, isNew = false, disableOnClick=fa
         <h3 className="text-white text-[16px] sm:text-[20px] md:text-[25px] font-semibold">{name}</h3>
         <p className="text-gray-400 text-sm sm:text-lg">{profession}</p>
       </div>
-    </div> : 
+    </div>
+    </div>
+     : 
     <TransitionLink href={`/chat`} before={handleClick}>
       <div className="relative w-36 h-60 sm:w-40 sm:h-64 md:w-52 md:h-80 transition-all hover:scale-105 cursor-pointer group">
       <div className="relative w-full h-full bg-spotlight brightness-50 overflow-hidden rounded-[30px] group-hover:border-4 group-hover:border-white flex flex-col items-center shadow-lg">

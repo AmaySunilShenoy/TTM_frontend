@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect } from "react";
-import { EmblaOptionsType, EmblaCarouselType } from "embla-carousel";
+import React from "react";
+import { EmblaOptionsType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import Fade from "embla-carousel-fade";
 import "./styles.css";
-import { helvetica, helveticaBold, helveticaLight } from "@/app/fonts";
+import {helveticaBold, helveticaLight } from "@/fonts";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import instance from "@/constants/axios";
-import { NewPoi, PoI } from "@/app/home/page";
+import { NewPoi } from "@/app/home/page";
 import TransitionLink from "../TransitionLink";
 
 type PropType = {
@@ -18,12 +17,11 @@ type PropType = {
 
 const PoiCarousel: React.FC<PropType> = (props) => {
   const { slides, options } = props;
-  const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+  const [emblaRef] = useEmblaCarousel(options, [
     Fade(),
     Autoplay({ playOnInit: true, delay: 6000 }),
   ]);
 
-  const router = useRouter();
   const handleClick = async (id: string) => {
     try {
       console.log("ID:", id);
@@ -56,7 +54,7 @@ const PoiCarousel: React.FC<PropType> = (props) => {
               },
               index: number
             ) => (
-              <div className="embla__slide text-white flex-col justify-center" key={index}>
+              <div className="embla__slide text-white flex-col justify-center" key={`${index}_${poi.about.charAt(0)}`}>
                 <div className="flex flex-col-reverse items-center md:flex-row gap-10 xl:gap-0">
                 <div className="flex flex-col items-center md:items-start justify-center xl:gap-10 text-left ">
                   <div className="p-2 flex flex-col gap-4">

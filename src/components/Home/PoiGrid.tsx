@@ -3,13 +3,17 @@ import React, { useEffect } from 'react'
 import { NewPoi, PoI } from '@/app/home/page'
 import PoiCard from './PoiCard'
 import instance from '@/constants/axios';
-import { helveticaBold, helveticaLight } from '@/app/fonts';
+import { helveticaBold, helveticaLight } from '@/fonts';
 import LoadingPoiCard from './LoadingPoiCard';
+import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 const PoiGrid = ({NewPoiList} : {NewPoiList : NewPoi[]}) => {
   const [poiList, setPoiList] = React.useState<PoI[]>([])
   const [searchQuery, setSearchQuery] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(true)
+  const { user } = useUser();
+  const router = useRouter();
 
 
 
@@ -45,20 +49,22 @@ const PoiGrid = ({NewPoiList} : {NewPoiList : NewPoi[]}) => {
     </div>
 
     <div className="grid grid-cols-2 gap-5 p-10 1.5xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3">
-    {isLoading
-        ? Array.from({ length: 6 }).map((_, index) => (
-            <LoadingPoiCard key={index} />
-          ))
-        : filteredPoiList.map((poi, index) => (
-            <PoiCard
-              key={index}
-              id={poi.id}
-              name={poi.name}
-              image={poi.image}
-              profession={poi.type}
-              isNew={NewPoiList.map((poi) => poi.poi.name).includes(poi.name)}
-            />
+    {isLoading && Array.from({ length: 6 }).map((_, index) => (
+            <LoadingPoiCard key={`${index}_${isLoading}`} />
           ))}
+    {filteredPoiList.map((poi, index) => (
+  <PoiCard
+    key={`${index}_${poi.name}`}
+    id={poi.id}
+    name={poi.name}
+    image={poi.image}
+    profession={poi.type}
+    isNew={NewPoiList.map((newPoi) => newPoi.poi.name).includes(poi.name)}
+    disableDefaultClick={!user}
+    onClick={!user ? () => router.push('/authenticate') : undefined} 
+  />
+))}
+
     </div>
     </div>
 

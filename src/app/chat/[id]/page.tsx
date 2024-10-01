@@ -1,5 +1,5 @@
 "use client";
-import { helveticaBold, helveticaLight } from "@/app/fonts";
+import { helveticaBold, helveticaLight } from "@/fonts";
 import Profile from "@/components/Chat/Profile";
 import SideTab from "@/components/Chat/SideTab";
 import ChatArea from "@/components/Chat/ChatArea";
@@ -37,11 +37,13 @@ const Chat = () => {
 
   return (
     <div className="flex">
+      {/* Side navigation tab */}
       <SideTab />
       <div className="relative flex-[4] h-screen w-full flex-col overflow-hidden bg-black">
         <div className="flex">
           {/* Character Info */}
           <Profile poi={poi}/>
+          {/* Main Chat Area */}
           <ChatArea chat_id={id} poi={poi} messages={messages} setMessages={setMessages}/>
         </div>
       </div>

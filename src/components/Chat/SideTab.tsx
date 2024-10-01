@@ -1,14 +1,11 @@
-import { helveticaBlack, helveticaBold, helveticaBoldItalic, helveticaLight } from "@/app/fonts";
+import { helveticaBold, helveticaLight } from "@/fonts";
 import instance from "@/constants/axios";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { CgProfile } from "react-icons/cg";
-import { IoChatbubbles, IoSettings } from "react-icons/io5";
+import { IoChatbubbles } from "react-icons/io5";
 import { RiHomeFill } from "react-icons/ri";
 import TransitionLink from "../TransitionLink";
 import { useUser } from "@/contexts/UserContext";
-import { BiLogOut } from "react-icons/bi";
 
 const SideTab = () => {
   const [open, setOpen] = useState(false);

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import TextArea from "./TextArea";
 import { BiSend } from "react-icons/bi";
-import { helveticaLight } from "@/app/fonts/index";
+import { helveticaLight, onest } from "@/fonts/index";
 import instance from "@/constants/axios";
 import { PoI } from "@/app/home/page";
 import Message from "./Message";
@@ -18,8 +18,10 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
   const [currentMessage, setCurrentMessage] = useState("");
   const [userInput, setUserInput] = useState("");
   const [messageLoading, setMessageLoading] = useState(false);
+  const [chatSessionLoaded, setChatSessionLoaded] = useState(false);
   const { user } = useUser();
   const socketRef = useRef<Socket | null>(null);
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -55,21 +57,21 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
 
       // Handle socket events
       socketRef.current.on("connect", () => {
-        console.log("Socket connected");
         if (chat_id) {
-          console.log("Initializing chat with ID:", chat_id);
           socketRef.current?.emit("init chat", chat_id);
         }
       });
 
       socketRef.current.on("chat stream", (data) => {
         setMessageLoading(false);
-        console.log("chat stream from AI", data.content);
         setCurrentMessage((prev) => prev + data.content);
       });
 
+      socketRef.current.on("chat session loaded", (data) => {
+        setChatSessionLoaded(true);
+      });
+
       socketRef.current.on("chat message end", (data) => {
-        console.log("chat message end", data.role, data.content);
         setMessages((prev: Message[]): Message[] => [
           ...prev,
           { role: data.role, content: data.content },
@@ -85,7 +87,6 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
 
   const sendMessage = () => {
     if (userInput.trim() && socketRef.current?.connected) {
-      console.log("Sending message", userInput);
       instance
         .post("/message", {
           chat_id: chat_id,
@@ -95,7 +96,6 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
         .then((res) => {
           if (res.status === 201) {
             setMessageLoading(true);
-            console.log("Emitting chat message");
             socketRef.current?.emit("chat message", chat_id, userInput);
             setMessages((prev : Message[]) => [
               ...prev,
@@ -104,17 +104,21 @@ const ChatArea = ({ chat_id, poi, messages, setMessages }: { chat_id: string, po
             setUserInput("");
           }
         });
-    } else {
-      console.log("Socket not connected or input empty");
     }
   };
 
   return (
     <div className="relative flex h-screen w-[80%] overflow-x-hidden overflow-y-scroll bg-lightBlack rounded-[20px]">
       <div className="p-4 flex h-full w-full flex-1 flex-col md:px-2 ">
-        <div className="w-full h-[94%] p-3 px-4 flex flex-col gap-5 overflow-scroll">
+        <div className="relative w-full h-[94%] p-3 px-4 flex flex-col gap-5 overflow-scroll">
+          {!chatSessionLoaded && (
+            <div className="absolute w-full h-full flex flex-col gap-3 items-center justify-center text-white">
+              <img src="/assets/logo.png" alt="logo" className="w-20 h-20" />
+              <p className={`text-2xl ${onest.className}`}>Please wait a moment till we load your chat session</p>
+            </div>
+            )}
           {messages.map((msg : {role : string, content : string}, index : number) => (
-            <Message key={index} role={msg.role} content={msg.content} image={poi.chat_image} />
+            <Message key={`${index}_${msg.content}`} role={msg.role} content={msg.content} image={poi.chat_image} />
           ))}
           {currentMessage && (
             <Message image={poi.image} content={currentMessage} />

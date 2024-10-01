@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { redirect } from 'next/navigation';
 
@@ -8,15 +8,14 @@ const withAuth = (WrappedComponent : any) => {
     const { user } = useUser();
     
     useEffect(() => {
-      console.log(user)
       if (user !== undefined) {
         if (!user) {
-          redirect('/authenticate');  // Redirect to login if not authenticated
+          redirect('/authenticate');
         }
       }
     }, [user]);
     if (!user) {
-      return null; // Or a loading state
+      return null;
     }
 
     return <WrappedComponent {...props} />;

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-export default function TextArea({value, setValue, onSubmit, className, placeholder}: {value: string, setValue: (value: string) => void, onSubmit: () => void, className?: string, placeholder?: string}) {
+export default function TextArea({value, setValue, onSubmit, className, placeholder}: Readonly<{value: string, setValue: (value: string) => void, onSubmit: () => void, className?: string, placeholder?: string}>) {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const resizeTextArea = () => {

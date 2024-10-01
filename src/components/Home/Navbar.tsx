@@ -1,34 +1,17 @@
-import { helveticaBold, helveticaLight } from "@/app/fonts";
+import { helveticaBold, helveticaLight } from "@/fonts";
 import { useUser } from "@/contexts/UserContext";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { BiLogOut } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { RiAdminFill } from "react-icons/ri";
-import { GlitchHandle, useGlitch } from "react-powerglitch";
 
 const Navbar = () => {
-  const { user, logout } = useUser();
+  const { user } = useUser();
   const navitems = ["Home", "Chat"];
   const [openMenu, setOpenMenu] = React.useState(false);
   const router = useRouter();
-  const glitchText: GlitchHandle = useGlitch({
-    hideOverflow: false,
-    timing: {
-      duration: 5000
-    },
-    shake: {
-      velocity: 15,
-      amplitudeX: 0.15,
-      amplitudeY: 0.15
-    },
-    slice: {
-      count: 1
-    }
-  });
-  console.log(user);
-
   return (
     <nav className={`relative text-white p-5 ${helveticaBold.className}`}>
       <p className="text-[50px] ml-4">Talking Time Machine</p>
@@ -37,15 +20,15 @@ const Navbar = () => {
           openMenu ? "" : "items-center"
         } absolute right-4 text-lg top-6 w-[20%] mr-5 z-50`}
       >
-        {navitems.map((item, index) => (
-          <Link href={`#${item}`} key={index} className="relative group cursor-pointer">
+        {navitems.map((item) => (
+          <Link href={`#${item}`} key={item} className="relative group cursor-pointer">
             {item}
             <span className="absolute h-[3px] bg-white -bottom-1 left-1/2 transform -translate-x-1/2 w-0 transition-all origin-center group-hover:w-full"></span>
           </Link>
         ))}
         {user ? (
           <div
-            className="w-10 min-h-10 h-fit bg-white text-black rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all duration-500 group hover:w-32 hover:h-fit"
+            className="w-10 min-h-10 h-fit bg-white text-black rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all duration-500 group hover:w-36 hover:h-fit"
             onMouseEnter={() =>
               setTimeout(() => {
                 setOpenMenu(true);
@@ -75,7 +58,7 @@ const Navbar = () => {
                   <p className=" gap-3 flex items-center m-3 hover:scale-105 cursor-pointer">
                     <CgProfile /> Account
                   </p>{" "}
-                  {user.role === "user" ? (
+                  {user.role === "admin" ? (
                   <p className="gap-3 flex items-center m-3 hover:scale-105 cursor-pointer" onClick={() => router.push('/dashboard')}>
                     <RiAdminFill />
                     Dashboard
